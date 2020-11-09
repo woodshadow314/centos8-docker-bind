@@ -64,6 +64,8 @@ else
     let success_count++
 fi
 
+firewall-cmd --permanent --add-service=dns > /dev/null 2>&1
+
 cat <<'EOF' >> /etc/sysconfig/named > /dev/null 2>&1
 OPTIONS="-4"
 EOF
@@ -359,7 +361,7 @@ $TTL   86400 ; one day
                           86400 ) ; min ttl  1 day
 		
         IN      NS  dns.urfin.tst.
-        
+
 dns     IN      A   192.168.0.200
 EOF
 
