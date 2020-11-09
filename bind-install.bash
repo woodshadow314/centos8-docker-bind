@@ -113,30 +113,31 @@ fi
 function base_config {
 #read -p "Enter administrators server contact phone number [+7(xxx)xxx-xx-xx]: " -e number
 #echo -e "\n[\e[1;32mDONE\e[0;39m]\n"
-number = "77-77-77"
 
 cp /etc/named.conf /etc/named.conf_old
 
 cat <<EOF > /etc/named.conf
 options {
       hostname                     none;
-      version                      "Administrators contact: ph. ${number}";
+      version                      "Administrators contact: ph. ";
       listen-on port 53            { 127.0.0.1; any; };
-      listen-on-v6 port 53         { none; };
+      listen-on-v6 port 53         { ::1; any; };
       directory                    "/var/named";
       dump-file                    "/var/named/data/cache_dump.db";
       statistics-file              "/var/named/data/named_stats.txt";
       memstatistics-file           "/var/named/data/named_mem_stats.txt";
+      secroots-file                "/var/named/data/named.secroots";
+      recursing-file               "/var/named/data/named.recursing";
       memstatistics                yes;
       zone-statistics              yes;
       max-cache-size               256M;
       max-journal-size             500M;
       cleaning-interval            60;
-      allow-query                  { localhost; localnets; 10/8; };
+      allow-query                  { localhost; localnets; any; };
       allow-transfer               { localhost; localnets; };
       allow-update                 { localhost; localnets; };
-      allow-query-on               { localhost; localnets; 10/8; };
-      allow-query-cache-on         { localhost; localnets; 10/8; };
+      allow-query-on               { localhost; localnets; any; };
+      allow-query-cache-on         { localhost; localnets; any; };
       transfer-source              * port 53;
       notify-source                * port 53;
       notify                       explicit;
@@ -146,18 +147,13 @@ options {
       flush-zones-on-shutdown      yes;
       auth-nxdomain                no;    # conform to RFC1035
 
- /*       
-      zero-no-soa-ttl              yes;
-      zero-no-soa-ttl-cache        yes;
-*/
-
       dnssec-enable                yes;
       dnssec-validation            auto;
       dnssec-lookaside             auto;
 
-      rate-limit		 { responses-per-second 10;
-				   referrals-per-second 5;
-				   nodata-per-second 5;
+      rate-limit		         { responses-per-second 10;
+				                   referrals-per-second 5;
+				                   nodata-per-second 5;
                                    errors-per-second 5;
                                    all-per-second 20;
                                    min-table-size 500;
@@ -294,7 +290,7 @@ EOF
 
 cat <<'EOF' > /etc/named/views.conf
 acl internal {
-        10/8;
+        192/8;
         };
 
 view "internal" {
@@ -310,11 +306,11 @@ view "internal" {
       recursion yes;
       additional-from-auth yes;
       additional-from-cache yes;
-      forward first;
-      forwarders {
-	10.248.0.180;
-	10.248.0.181;
-	};
+    #   forward first;
+    #   forwarders {
+	# 10.248.0.180;
+	# 10.248.0.181;
+	# };
 			
       response-policy { zone "blockeddomain.hosts"; 
 	  zone "dbl.rpz.spamhaus.org" policy nxdomain;
@@ -376,21 +372,21 @@ zone "." IN {
 };
 
 acl external {
-        <ACL-ROLE>;
+        any;
         };
 
 view "external" {
       match-clients {
-        external;
-        };
+            external;
+            };
       allow-query {
-        external;
-        };
+            external;
+            };
       recursion no;
       additional-from-auth no;
       additional-from-cache no;
 
-#include                       "/etc/named/zones.conf";
+#include                       "/etc/named/zones-external.conf";
 
 };
 
@@ -399,6 +395,24 @@ EOF
 
 cat <<'EOF' > /etc/named/zones.conf
 # Zone inventory
+
+zone "urfin.tst" in {
+	type master;
+	file "/var/named/masters/db.master.tst.urfin";
+	};
+EOF
+
+cat <<'EOF' > /var/named/masters/db.master.tst.urfin
+\$TTL   86400 ; one day
+
+@       IN      SOA     ${HOSTNAME}. postmaster.domain (
+                          1       ; serial
+                          28800   ; refresh  8 hours
+                          7200    ; retry    2 hours
+                          864000  ; expire  10 days
+                          86400 ) ; min ttl  1 day
+		
+        IN      NS  ${HOSTNAME}.
 EOF
 
 cat <<EOF > /var/named/blockeddomain.hosts
