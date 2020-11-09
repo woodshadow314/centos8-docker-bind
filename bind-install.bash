@@ -355,7 +355,7 @@ EOF
 cat <<'EOF' > /var/named/masters/db.master.tst.urfin
 $TTL   86400 ; one day
 
-@       IN      SOA     dns.urfin.tst. postmaster.urfin.tst (
+@       IN      SOA     dns.urfin.tst. postmaster.urfin.tst. (
                           2020110900       ; serial
                           28800   ; refresh  8 hours
                           7200    ; retry    2 hours
