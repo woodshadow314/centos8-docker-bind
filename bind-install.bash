@@ -293,6 +293,8 @@ EOF
 cat <<'EOF' > /etc/named/views.conf
 acl internal {
         192/8;
+        127.0.0.1;
+        localhost;
         };
 
 view "internal" {
