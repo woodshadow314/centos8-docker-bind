@@ -513,19 +513,24 @@ else
 fi
 }
 
-PS3='Select action: '
-options=("Authoritative nameservers answer to resource records that are part of their zones only." "Recursive nameservers offer resolution services, but they are not authoritative for any zone." "For edit manual the main configuration file." "Check configuration and status." "Quit")
-        select opt in "${options[@]}"
-        do
-        case $opt in
-                "Authoritative nameservers answer to resource records that are part of their zones only.") install_bind; base_config; check_base_config; any_bind; restart_bind; continue;;
-                "Recursive nameservers offer resolution services, but they are not authoritative for any zone.") install_bind; base_config; check_base_config; none_bind; restart_bind; continue;;
-                "For edit manual the main configuration file.") manual_edit; exit;;
-                "Check configuration and status.") check_status; exit;;
-                "Quit") break;;
-                *) echo "Invalid option. Try another one."; continue;;
-        esac
-        done
+############################################################################################
+#"Authoritative nameservers answer to resource records that are part of their zones only.")#
+############################################################################################
+install_bind && base_config && check_base_config && any_bind && restart_bind
+
+# PS3='Select action: '
+# options=("Authoritative nameservers answer to resource records that are part of their zones only." "Recursive nameservers offer resolution services, but they are not authoritative for any zone." "For edit manual the main configuration file." "Check configuration and status." "Quit")
+#         select opt in "${options[@]}"
+#         do
+#         case $opt in
+#                 "Authoritative nameservers answer to resource records that are part of their zones only.") install_bind; base_config; check_base_config; any_bind; restart_bind; continue;;
+#                 "Recursive nameservers offer resolution services, but they are not authoritative for any zone.") install_bind; base_config; check_base_config; none_bind; restart_bind; continue;;
+#                 "For edit manual the main configuration file.") manual_edit; exit;;
+#                 "Check configuration and status.") check_status; exit;;
+#                 "Quit") break;;
+#                 *) echo "Invalid option. Try another one."; continue;;
+#         esac
+#         done
 
 #END
 exit 0
