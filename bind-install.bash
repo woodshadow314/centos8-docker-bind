@@ -151,9 +151,9 @@ options {
       dnssec-validation            auto;
       dnssec-lookaside             auto;
 
-      rate-limit		         { responses-per-second 10;
-				                   referrals-per-second 5;
-				                   nodata-per-second 5;
+      rate-limit                 { responses-per-second 10;
+                                   referrals-per-second 5;
+                                   nodata-per-second 5;
                                    errors-per-second 5;
                                    all-per-second 20;
                                    min-table-size 500;
@@ -306,60 +306,6 @@ view "internal" {
       recursion yes;
       additional-from-auth yes;
       additional-from-cache yes;
-    #   forward first;
-    #   forwarders {
-	# 10.248.0.180;
-	# 10.248.0.181;
-	# };
-			
-      response-policy { zone "blockeddomain.hosts"; 
-	  zone "dbl.rpz.spamhaus.org" policy nxdomain;
-	  zone "botnetcc.rpz.spamhaus.org" policy nodata;
-	  zone "malware-adware.rpz.spamhaus.org" policy nodata;
-	  zone "malware-aggressive.rpz.spamhaus.org" policy nodata;
-	  zone "drop.rpz.spamhaus.org" policy nodata; 
-	  };
-		
-zone "blockeddomain.hosts" IN {
-      type master;
-      file "/var/named/blockeddomain.hosts";
-      allow-update { none; };
-      };
-				
-zone "dbl.rpz.spamhaus.org" {
-	type slave;
-	file "/var/named/slaves/dbl.rpz.spamhaus.org";
-	masters { 34.194.195.25; 35.156.219.71; };
-	allow-transfer { none; };
-	};
-
-zone "botnetcc.rpz.spamhaus.org" {
-	type slave;
-	file "/var/named/slaves/botnetcc.rpz.spamhaus.org";
-	masters { 34.194.195.25; 35.156.219.71; };
-	allow-transfer { none; };
-	};
-
-zone "malware-adware.rpz.spamhaus.org" {
-	type slave;
-	file "/var/named/slaves/malware-adware.rpz.spamhaus.org";
-	masters { 34.194.195.25; 35.156.219.71; };
-	allow-transfer { none; };
-	};
-					
-zone "malware-aggressive.rpz.spamhaus.org" {
-	type slave;
-	file "/var/named/slaves/malware-aggressive.rpz.spamhaus.org";
-	masters { 34.194.195.25; 35.156.219.71; };
-	allow-transfer { none; };
-	};
-
-zone "drop.rpz.spamhaus.org" {
-	type slave;
-	file "/var/named/slaves/drop.rpz.spamhaus.org";
-	masters { 34.194.195.25; 35.156.219.71; };
-	allow-transfer { none; };
-	};
 
 include                       "/etc/named.rfc1912.zones";				
 include                       "/etc/named/zones.conf";
@@ -403,16 +349,18 @@ zone "urfin.tst" in {
 EOF
 
 cat <<'EOF' > /var/named/masters/db.master.tst.urfin
-\$TTL   86400 ; one day
+$TTL   86400 ; one day
 
-@       IN      SOA     ${HOSTNAME}. postmaster.domain (
-                          1       ; serial
+@       IN      SOA     dns.urfin.tst. postmaster.urfin.tst (
+                          2020110900       ; serial
                           28800   ; refresh  8 hours
                           7200    ; retry    2 hours
                           864000  ; expire  10 days
                           86400 ) ; min ttl  1 day
 		
-        IN      NS  ${HOSTNAME}.
+        IN      NS  dns.urfin.tst.
+        
+dns     IN      A   192.168.0.200
 EOF
 
 cat <<EOF > /var/named/blockeddomain.hosts
