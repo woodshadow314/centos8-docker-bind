@@ -64,7 +64,7 @@ else
     let success_count++
 fi
 
-firewall-cmd --permanent --add-service=dns > /dev/null 2>&1
+firewall-cmd --permanent --add-service=dns && firewall-cmd --reload > /dev/null 2>&1
 
 cat <<'EOF' >> /etc/sysconfig/named > /dev/null 2>&1
 OPTIONS="-4"
