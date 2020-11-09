@@ -19,3 +19,4 @@ rndc stop
 nmtui  # delete DNS 8.8.8.8 and searchdomain
 
 tail -f /var/named/chroot/var/log/*
+systemctl start named-chroot
