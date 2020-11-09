@@ -70,7 +70,7 @@ cat <<'EOF' >> /etc/sysconfig/named > /dev/null 2>&1
 OPTIONS="-4"
 EOF
 
-mkdir -p /var/named/masters && chmod u=rwx,g=rx /var/named/masters && chown root:named /var/named/masters &&
+mkdir -p /var/named/masters && chmod u=rwx,g=rx /var/named/masters && chown named:named /var/named/masters &&
 chcon -t named_zone_t /var/named/* &&
 chcon -t named_conf_t /etc/{named,rndc}.* &&
 chcon -t named_cache_t /var/named/{masters,slaves,data} &&
@@ -366,6 +366,8 @@ $TTL   86400 ; one day
 
 dns     IN      A   192.168.0.200
 EOF
+
+chown named:named /var/named/masters/db.master.tst.urfin > /dev/null 2>&1
 
 cat <<EOF > /var/named/blockeddomain.hosts
 \$TTL   86400 ; one day
