@@ -356,7 +356,7 @@ cat <<'EOF' > /var/named/masters/db.master.tst.urfin
 $TTL   86400 ; one day
 
 @       IN      SOA     dns.urfin.tst. postmaster.urfin.tst. (
-                          2020110900       ; serial
+                          2020111000       ; serial
                           28800   ; refresh  8 hours
                           7200    ; retry    2 hours
                           864000  ; expire  10 days
@@ -365,6 +365,8 @@ $TTL   86400 ; one day
         IN      NS  dns.urfin.tst.
 
 dns     IN      A   192.168.0.200
+
+docker  IN      A   192.168.0.211
 EOF
 
 chown named:named /var/named/masters/db.master.tst.urfin > /dev/null 2>&1
